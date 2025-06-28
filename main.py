@@ -7,6 +7,8 @@ BOOK_PIXEL_COLOR = (100, 74, 23)
 FIRST_OFFER_PIXEL_TO_CHECK = (606, 329)
 SECOND_OFFER_PIXEL_TO_CHECK = (606, 410)
 
+SLEEP_DURATION_FOR_UI_UPDATES = 0.5
+
 FIRST_OFFER_TARGET_PIXEL = (735, 329)
 SECOND_OFFER_TARGET_PIXEL = (735, 410)
 
@@ -41,14 +43,14 @@ def is_second_offer_book() -> bool:
 
 def get_first_offer_enchantment() -> str:
     pyautogui.moveTo(*FIRST_OFFER_TARGET_PIXEL)
-    time.sleep(1) 
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
     first_offer_image = get_screen_capture(FIRST_OFFER_BOOK_TOP_LEFT, FIRST_OFFER_BOOK_BOTTOM_RIGHT)
     return get_text_from_image(first_offer_image)
 
 
 def get_second_offer_enchantment() -> str:
     pyautogui.moveTo(*SECOND_OFFER_TARGET_PIXEL)
-    time.sleep(1) 
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
     second_offer_image = get_screen_capture(SECOND_TARGET_BOOK_TOP_LEFT, SECOND_TARGET_BOOK_BOTTOM_RIGHT)
     return get_text_from_image(second_offer_image)
 
@@ -59,6 +61,7 @@ def main():
     elif is_second_offer_book():
         print("Second offer is a book with text:", get_second_offer_enchantment())
     else:
-        print("No book offers found.")
+        print("No enchanted book offer found.")
 
-main()
+if __name__ == "__main__":
+    main()
