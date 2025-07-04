@@ -2,6 +2,7 @@ import pyautogui
 import time
 from PIL import Image
 import pytesseract
+import ctypes
 
 BOOK_PIXEL_COLOR = (100, 74, 23)
 FIRST_OFFER_PIXEL_TO_CHECK = (606, 329)
@@ -17,8 +18,28 @@ FIRST_OFFER_BOOK_BOTTOM_RIGHT = (1312, 365)
 SECOND_TARGET_BOOK_TOP_LEFT = (767, 402)
 SECOND_TARGET_BOOK_BOTTOM_RIGHT = (1312, 452)
 
+MOUSEEVENTF_LEFTDOWN = 0x0002
+MOUSEEVENTF_LEFTUP   = 0x0004
+
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+
+class MouseInputStruct(ctypes.Structure):
+    _fields_ = [
+        ("dx", ctypes.c_long),
+        ("dy", ctypes.c_long),
+        ("mouseData", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong))
+    ]
+
+class InputUnion(ctypes.Structure):
+    _fields_ = [
+        ("type", ctypes.c_ulong),
+        ("mi", MouseInputStruct)
+    ]
 
 
 def get_screen_capture(top_left: int, bottom_right: int) -> Image:
@@ -65,6 +86,32 @@ def look_at_job_block() -> None:
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
+def perform_left_mouse_click(click_hold_duration: float) -> None:
+    send_input = ctypes.windll.user32.SendInput
+    extra_info = ctypes.c_ulong(0)
+    input_structure = InputUnion()
+    input_structure.type = 0
+    input_structure.mi = MouseInputStruct(
+        0, 0, 0, MOUSEEVENTF_LEFTDOWN, 0, ctypes.pointer(extra_info)
+    )
+    send_input(1, ctypes.pointer(input_structure), ctypes.sizeof(input_structure))
+
+    time.sleep(click_hold_duration)
+
+    input_structure.mi = MouseInputStruct(
+        0, 0, 0, MOUSEEVENTF_LEFTUP, 0, ctypes.pointer(extra_info)
+    )
+    send_input(1, ctypes.pointer(input_structure), ctypes.sizeof(input_structure))
+
+
+def break_block_ahead() -> None:
+    current_pixel_color = pyautogui.pixel(*pyautogui.position())
+    while pyautogui.pixel(*pyautogui.position()) == current_pixel_color:
+        perform_left_mouse_click(0.1)
+    
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
+
+
 def main():
     time.sleep(4)
     print("Checking for enchanted book offers...")
@@ -76,6 +123,10 @@ def main():
         print("No enchanted book offer found.")
         exit_trading_dialog()
         look_at_job_block()
+        break_block_ahead()
 
 if __name__ == "__main__":
     main()
+
+
+
