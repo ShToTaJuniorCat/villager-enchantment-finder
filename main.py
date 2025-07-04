@@ -1,6 +1,5 @@
 import time
 
-from consts import SLEEP_DURATION_FOR_UI_UPDATES
 from enchantments_finder import (
     is_first_offer_book,
     is_second_offer_book,
@@ -28,17 +27,17 @@ def get_new_offer() -> None:
     open_villager_trading_dialog()
 
 
-def main():
+def main() -> None:
     time.sleep(4)
 
     while True:
         print("Checking for enchanted book offers...")
         if is_first_offer_book():
-            print("First offer is a book with text:", get_first_offer_enchantment())
+            print(f"First offer is enchantment {get_first_offer_enchantment()}")
         elif is_second_offer_book():
-            print("Second offer is a book with text:", get_second_offer_enchantment())
+            print(f"Second offer is enchantment {get_second_offer_enchantment()}")
         else:
-            print("No enchanted book offer found.")
+            print("No enchanted book offer found, trying again...")
             get_new_offer()
 
 
