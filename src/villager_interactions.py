@@ -2,7 +2,7 @@ import time
 
 import pyautogui
 
-from consts import SLEEP_DURATION_FOR_UI_UPDATES
+from src.consts import SLEEP_DURATION_FOR_UI_UPDATES, DISTANCE_FROM_VILLAGER_TO_BLOCK, DURATION_TO_MOVE_MOUSE
 
 DIALOG_EXIT_KEY = "escape"
 DIALOG_TOP_LEFT_PIXEL = (435, 245)
@@ -17,7 +17,7 @@ def exit_trading_dialog() -> None:
 
 
 def look_at_villager_from_block() -> None:
-    pyautogui.move(0, -60, duration=0.5)
+    pyautogui.move(0, 1 - DISTANCE_FROM_VILLAGER_TO_BLOCK, duration=DURATION_TO_MOVE_MOUSE)
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
@@ -25,8 +25,8 @@ def _is_villager_dialog_open() -> bool:
     top_left_color = pyautogui.pixel(*DIALOG_TOP_LEFT_PIXEL)
     bottom_right_color = pyautogui.pixel(*DIALOG_BOTTOM_RIGHT_PIXEL)
     return (
-        top_left_color == DIALOG_PIXELS_COLOR and
-        bottom_right_color == DIALOG_PIXELS_COLOR
+        top_left_color == DIALOG_PIXELS_COLOR
+        and bottom_right_color == DIALOG_PIXELS_COLOR
     )
 
 

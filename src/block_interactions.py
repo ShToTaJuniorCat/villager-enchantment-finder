@@ -3,7 +3,7 @@ import ctypes
 
 import pyautogui
 
-from consts import SLEEP_DURATION_FOR_UI_UPDATES
+from src.consts import SLEEP_DURATION_FOR_UI_UPDATES, DISTANCE_FROM_VILLAGER_TO_BLOCK, DURATION_TO_MOVE_MOUSE
 
 SECONDS_TO_BREAK_LECTERN = 0.5
 
@@ -27,7 +27,7 @@ class InputUnion(ctypes.Structure):
 
 
 def look_at_job_block_from_villager() -> None:
-    pyautogui.move(0, 60, duration=0.5)
+    pyautogui.move(0, DISTANCE_FROM_VILLAGER_TO_BLOCK, duration=DURATION_TO_MOVE_MOUSE)
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
