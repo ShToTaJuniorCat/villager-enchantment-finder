@@ -5,6 +5,7 @@ from enchantments_finder import (
     is_second_offer_book,
     get_first_offer_enchantment,
     get_second_offer_enchantment,
+    is_enchantment_a_target,
 )
 from block_interactions import (
     look_at_job_block_from_villager,
@@ -31,14 +32,21 @@ def main() -> None:
     time.sleep(4)
 
     while True:
-        print("Checking for enchanted book offers...")
         if is_first_offer_book():
-            print(f"First offer is enchantment {get_first_offer_enchantment()}")
+            first_offer_enchantment = get_first_offer_enchantment()
+            print(f"First offer is enchantment {first_offer_enchantment}")
+
+            if is_enchantment_a_target(first_offer_enchantment):
+                break
         elif is_second_offer_book():
-            print(f"Second offer is enchantment {get_second_offer_enchantment()}")
-        else:
-            print("No enchanted book offer found, trying again...")
-            get_new_offer()
+            second_offer_enchantment = get_second_offer_enchantment()
+            print(f"Second offer is enchantment {second_offer_enchantment}")
+            
+            if is_enchantment_a_target(second_offer_enchantment):
+                break
+
+        print("No target enchantment offer found, trying again...")
+        get_new_offer()
 
 
 if __name__ == "__main__":
