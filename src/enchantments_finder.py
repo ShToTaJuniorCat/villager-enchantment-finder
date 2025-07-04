@@ -143,18 +143,45 @@ def _does_enchantment_match_target(
     return name_matches and level_matches
 
 
+def _is_valid_level(
+    level: str, common_ocr_errors: dict[str, list[str]] = LEVELS_COMMON_OCR_ERRORS
+) -> bool:
+    level = level.lower().strip()
+
+    if level in common_ocr_errors:
+        return True
+    for errors in common_ocr_errors.values():
+        if level in errors:
+            return True
+
+    return False
+
+
+def _split_enchantment_name_and_level(
+    enchantment: str, valid_levels: set[str]
+) -> tuple[str, str]:
+    words = enchantment.lower().strip().split()
+    if not words:
+        return "", ""
+
+    if len(words) == 1:
+        return words[0], ""
+
+    if _is_valid_level(words[-1]):
+        return " ".join(words[:-1]), words[-1]
+
+    return " ".join(words), ""
+
+
 def is_enchantment_a_target(
     enchantment: str,
     targets: tuple[dict, ...] = TARGET_ENCHANTMENTS,
     levels_common_ocr_errors: dict[str, list[str]] = LEVELS_COMMON_OCR_ERRORS,
 ) -> bool:
-    enchantment_details = enchantment.split(" ")
-    enchantment_name = enchantment_details[0].lower().strip()
-    print(f"Checking enchantment: {enchantment_name}")
-    enchantment_level = (
-        enchantment_details[1].lower().strip() if len(enchantment_details) > 1 else ""
+    valid_levels = set(levels_common_ocr_errors.keys())
+    enchantment_name, enchantment_level = _split_enchantment_name_and_level(
+        enchantment, valid_levels
     )
-    
     for target in targets:
         if _does_enchantment_match_target(
             enchantment_name, enchantment_level, target, levels_common_ocr_errors
