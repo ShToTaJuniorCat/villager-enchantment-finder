@@ -55,13 +55,27 @@ def get_second_offer_enchantment() -> str:
     return get_text_from_image(second_offer_image)
 
 
+def exit_trading_dialog() -> None:
+    pyautogui.press('escape')
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
+
+
+def look_at_job_block() -> None:
+    pyautogui.move(0, 60, duration=0.5)
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
+
+
 def main():
+    time.sleep(4)
+    print("Checking for enchanted book offers...")
     if is_first_offer_book():
         print("First offer is a book with text:", get_first_offer_enchantment())
     elif is_second_offer_book():
         print("Second offer is a book with text:", get_second_offer_enchantment())
     else:
         print("No enchanted book offer found.")
+        exit_trading_dialog()
+        look_at_job_block()
 
 if __name__ == "__main__":
     main()
