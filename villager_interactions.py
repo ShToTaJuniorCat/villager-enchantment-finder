@@ -21,7 +21,7 @@ def look_at_villager_from_block() -> None:
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
-def is_villager_dialog_open() -> bool:
+def _is_villager_dialog_open() -> bool:
     top_left_color = pyautogui.pixel(*DIALOG_TOP_LEFT_PIXEL)
     bottom_right_color = pyautogui.pixel(*DIALOG_BOTTOM_RIGHT_PIXEL)
     return (
@@ -31,7 +31,7 @@ def is_villager_dialog_open() -> bool:
 
 
 def open_villager_trading_dialog() -> None:
-    while not is_villager_dialog_open():
+    while not _is_villager_dialog_open():
         pyautogui.rightClick(duration=0.1)
         time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
         time.sleep(SECONDS_TO_WAIT_FOR_DIALOG)
