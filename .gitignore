@@ -1,0 +1,4 @@
+pylintrc
+*__pychache__/*
+.github
+*.pyc
