@@ -38,14 +38,14 @@ def main() -> None:
 
             if is_enchantment_a_target(first_offer_enchantment):
                 print("Found target enchantment offer!")
-                # break
+                break
         elif is_second_offer_book():
             second_offer_enchantment = get_second_offer_enchantment()
             print(f"Second offer is enchantment {second_offer_enchantment}")
             
             if is_enchantment_a_target(second_offer_enchantment):
                 print("Found target enchantment offer!")
-                # break
+                break
 
         print("No target enchantment offer found, trying again...")
         get_new_offer()
