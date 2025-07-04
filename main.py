@@ -3,12 +3,14 @@ import time
 from PIL import Image
 import pytesseract
 import ctypes
+from typing import Tuple
 
 BOOK_PIXEL_COLOR = (100, 74, 23)
 FIRST_OFFER_PIXEL_TO_CHECK = (606, 329)
 SECOND_OFFER_PIXEL_TO_CHECK = (606, 410)
 
 SLEEP_DURATION_FOR_UI_UPDATES = 0.5
+SECONDS_TO_BREAK_LECTERN = 0.5
 
 FIRST_OFFER_TARGET_PIXEL = (735, 329)
 SECOND_OFFER_TARGET_PIXEL = (735, 410)
@@ -42,7 +44,7 @@ class InputUnion(ctypes.Structure):
     ]
 
 
-def get_screen_capture(top_left: int, bottom_right: int) -> Image:
+def get_screen_capture(top_left: Tuple[int, int], bottom_right: Tuple[int, int]) -> Image:
     x1, y1 = top_left
     x2, y2 = bottom_right
     return pyautogui.screenshot(region=(x1, y1, x2 - x1, y2 - y1))
@@ -81,8 +83,13 @@ def exit_trading_dialog() -> None:
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
-def look_at_job_block() -> None:
+def look_at_job_block_from_villager() -> None:
     pyautogui.move(0, 60, duration=0.5)
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
+
+
+def look_at_villager_from_block() -> None:
+    pyautogui.move(0, -60, duration=0.5)
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
@@ -105,28 +112,40 @@ def perform_left_mouse_click(click_hold_duration: float) -> None:
 
 
 def break_block_ahead() -> None:
-    current_pixel_color = pyautogui.pixel(*pyautogui.position())
-    while pyautogui.pixel(*pyautogui.position()) == current_pixel_color:
-        perform_left_mouse_click(0.1)
-    
+    perform_left_mouse_click(SECONDS_TO_BREAK_LECTERN)
     time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
 
 
+def place_lectern() -> None:
+    pyautogui.rightClick()
+
+
+def open_villager_trading_dialog() -> None:
+    pyautogui.click(button='right', duration=0.1)
+    time.sleep(SLEEP_DURATION_FOR_UI_UPDATES)
+
+
+def get_new_offer() -> None:
+    exit_trading_dialog()
+    look_at_job_block_from_villager()
+    break_block_ahead()
+    place_lectern()
+    look_at_villager_from_block()
+    open_villager_trading_dialog()    
+    
+
 def main():
     time.sleep(4)
-    print("Checking for enchanted book offers...")
-    if is_first_offer_book():
-        print("First offer is a book with text:", get_first_offer_enchantment())
-    elif is_second_offer_book():
-        print("Second offer is a book with text:", get_second_offer_enchantment())
-    else:
-        print("No enchanted book offer found.")
-        exit_trading_dialog()
-        look_at_job_block()
-        break_block_ahead()
+
+    while True:
+        print("Checking for enchanted book offers...")
+        if is_first_offer_book():
+            print("First offer is a book with text:", get_first_offer_enchantment())
+        elif is_second_offer_book():
+            print("Second offer is a book with text:", get_second_offer_enchantment())
+        else:
+            print("No enchanted book offer found.")
+            get_new_offer()
 
 if __name__ == "__main__":
     main()
-
-
-
